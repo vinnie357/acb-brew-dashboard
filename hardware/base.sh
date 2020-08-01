@@ -92,7 +92,7 @@ max_framebuffers=2
 
 # NOOBS Auto-generated Settings:
 start_x=1
-gpu_mem=128
+gpu_mem=256
 EOF
 # reboot for changes
 echo $(ifconfig | grep "inet ")

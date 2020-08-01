@@ -21,6 +21,7 @@ services:
       - /opt/vc:/opt/vc
     devices:
       - /dev/vchiq
+      - /dev/vcsm
     ports:
     - "3001:3001"
     links:

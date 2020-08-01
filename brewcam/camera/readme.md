@@ -15,6 +15,8 @@ EOF
 
 cd camera
 make
-docker run -it -v /opt/vc:/opt/vc --device /dev/vchiq --env LD_LIBRARY_PATH=/opt/vc/lib camera
+docker run -it -v /opt/vc:/opt/vc -v /usr/bin/raspistill:/usr/bin/raspistill --device /dev/vchiq --device /dev/vcsm --env LD_LIBRARY_PATH=/opt/vc/lib camera bash
 
 /opt/vc/bin/raspistill -o output.jpg
+
+node takeStill.js
