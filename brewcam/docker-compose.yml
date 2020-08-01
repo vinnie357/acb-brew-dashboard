@@ -1,0 +1,49 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - web
+  web:
+    build: ./web
+    image: web
+    ports:
+    - "3000:3000"
+    environment:
+      WAIT_HOSTS: ocr:3002
+  camera:
+    build: ./camera
+    image: camera
+    volumes:
+      - /opt/vc:/opt/vc
+    devices:
+      - /dev/vchiq
+    ports:
+    - "3001:3001"
+    links:
+        - ocr
+    environment:
+      LD_LIBRARY_PATH: /opt/vc/lib
+  ocr:
+    image: clearlinux/tesseract-ocr
+    volumes:
+      - ./eng.traineddata:/usr/share/tessdata
+    restart: always
+    ports:
+      - 3002:3002
+    environment:
+      WAIT_HOSTS: camera:3001
+  db:
+    image: db
+    build: ./db
+    restart: always
+    ports:
+    - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_APP_ROOT_USERNAME: demoapp
+      MONGO_INITDB_APP_ROOT_PASSWORD: example

@@ -1,0 +1,6 @@
+# Get node image
+FROM node:latest
+ADD takeStill.js /
+RUN npm install pi-camera
+
+#CMD [ "node", "./takeStill.js" ]
