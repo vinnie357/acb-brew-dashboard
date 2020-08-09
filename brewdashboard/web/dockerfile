@@ -16,7 +16,7 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 3000
+EXPOSE 5000
 
 ## THE LIFE SAVER
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.7.3/wait /wait
@@ -24,6 +24,10 @@ RUN chmod +x /wait
 
 ## Launch the wait tool and then your application
 #CMD /wait && npm start
-
 CMD [ "/bin/bash", "/wait" ]
+
+## build latest
+RUN npm run build
+
+## start app
 CMD [ "npm", "start" ]

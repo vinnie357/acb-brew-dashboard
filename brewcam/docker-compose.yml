@@ -1,50 +1,74 @@
 version: "3"
+networks:
+  brewnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"
+        - subnet: "2001:3984:3989::/64"
 services:
   nginx:
     image: nginx:latest
+    networks:
+      - brewnet
+    volumes:
+      - ./nginx/brewcam.conf:/etc/nginx/conf.d/default.conf 
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - ENV=dev
+      - APPLICATION_URL=http://ocrweb
     links:
       - web
+      - ocrweb
   web:
     build: ./web
     image: web
+    networks:
+      - brewnet
     ports:
-    - "3000:3000"
+    - "3000"
     environment:
       WAIT_HOSTS: ocr:3002
   camera:
     build: ./camera
     image: camera
+    networks:
+      - brewnet
     volumes:
       - /opt/vc:/opt/vc
+      - /usr/bin/raspistill:/usr/bin/raspistill
+      - ./camera/takeStill.js:/workspace/takeStill.js
     devices:
       - /dev/vchiq
       - /dev/vcsm
     ports:
     - "3001:3001"
     links:
-        - ocr
+        - ocrweb
     environment:
       LD_LIBRARY_PATH: /opt/vc/lib
-  ocr:
-    image: clearlinux/tesseract-ocr
-    volumes:
-      - ./eng.traineddata:/usr/share/tessdata
+  ocrweb:
+    image: ocrweb
+    build: ./ocrweb
+    networks:
+      - brewnet
     restart: always
     ports:
-      - 3002:3002
+      - 5000
     environment:
       WAIT_HOSTS: camera:3001
-  db:
-    image: db
-    build: ./db
-    restart: always
-    ports:
-    - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_APP_ROOT_USERNAME: demoapp
-      MONGO_INITDB_APP_ROOT_PASSWORD: example
+  # db:
+  #   image: db
+  #   build: ./db
+  #   networks:
+  #     - brewnet
+  #   restart: always
+  #   ports:
+  #   - "27017:27017"
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: root
+  #     MONGO_INITDB_ROOT_PASSWORD: example
+  #     MONGO_INITDB_APP_ROOT_USERNAME: demoapp
+  #     MONGO_INITDB_APP_ROOT_PASSWORD: example

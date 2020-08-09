@@ -1,0 +1,27 @@
+version: "3"
+networks:
+  brewdashnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.239.0/24"
+        - subnet: "2001:3984:3989::/64"
+services:
+  nginx:
+      image: nginx:latest
+      networks:
+          - brewdashnet
+      volumes:
+          - ./nginx/dashboard.conf:/etc/nginx/conf.d/default.conf 
+      ports:
+          - "80:80"
+          - "443:443"
+  webdash:
+    build: ./web
+    image: webdash
+    networks:
+      - brewdashnet
+    ports:
+    - "5000"
+    environment:
+      WAIT_HOSTS: ocr:3002

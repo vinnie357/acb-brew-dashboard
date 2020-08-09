@@ -1,0 +1,19 @@
+#
+# Tesseract OCR Runtime Environment - Docker Container
+#
+FROM python:3
+# FROM python:3 as tesseract
+RUN apt-get update && apt-get install -y software-properties-common
+RUN apt-get update && apt-get install -y tesseract-ocr-all 
+
+# FROM python:3 as tools
+RUN pip install pytesseract Pillow Flask
+
+# FROM python:3
+RUN mkdir -p /workspace && mkdir -p /workspace/output && mkdir -p /workspace/images
+# COPY --from=tesseract /terraform /usr/local/bin/terraform
+# COPY --from=tools /terraform /usr/local/bin/terraform
+WORKDIR /workspace
+COPY . /workspace/
+# VOLUME ./images /workspace/images
+CMD ["python3", "app.py"]

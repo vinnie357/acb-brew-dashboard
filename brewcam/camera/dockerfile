@@ -1,6 +1,9 @@
 # Get node image
 FROM node:latest
+
 ADD takeStill.js /
 RUN npm install pi-camera
+RUN mkdir -p /workspace
+WORKDIR /workspace
 
-#CMD [ "node", "./takeStill.js" ]
+CMD [ "node", "./takeStill.js" ]

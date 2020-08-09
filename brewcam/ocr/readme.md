@@ -73,3 +73,16 @@ docker run -it \
 ocr \
 tesseract images/sample.png output/sample -l eng --psm 13
 ```
+
+# test3
+```bash
+# test filename.ext
+function test() {
+image=$1
+name=${image%.*}
+for type in {0..13};
+do
+docker run -it -v "$PWD"/images:/workspace/images -v "$PWD"/output:/workspace/output ocr tesseract images/$image output/$name-${type} -l eng --psm $type
+done
+}
+```   

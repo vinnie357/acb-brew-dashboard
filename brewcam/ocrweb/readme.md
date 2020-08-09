@@ -8,3 +8,8 @@ pipenv install pytesseract Pillow
 pipenv install Flask
 
 python3 app.py
+
+
+docker build -t ocrweb .
+
+docker run -it ocrweb python3 app.py
